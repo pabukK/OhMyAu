@@ -7,6 +7,7 @@ import myau.command.CommandManager;
 import myau.command.commands.*;
 import myau.config.Config;
 import myau.event.EventManager;
+import myau.hud.HudManager;
 import myau.management.*;
 import myau.module.Module;
 import myau.module.ModuleManager;
@@ -34,6 +35,7 @@ public class Myau {
     public static PropertyManager propertyManager;
     public static ModuleManager moduleManager;
     public static CommandManager commandManager;
+    public static HudManager hudManager;
 
     public Myau() {
         this.init();
@@ -159,6 +161,8 @@ public class Myau {
             propertyManager.properties.put(module.getClass(), properties);
             EventManager.register(module);
         }
+        hudManager = new HudManager();
+        EventManager.register(hudManager);
         Config config = new Config("default", true);
         if (config.file.exists()) {
             config.load();

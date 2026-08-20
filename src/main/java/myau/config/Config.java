@@ -2,6 +2,7 @@ package myau.config;
 
 import com.google.gson.*;
 import myau.Myau;
+import myau.hud.HudElement;
 import myau.mixin.IAccessorMinecraft;
 import myau.module.Module;
 import myau.util.ChatUtil;
@@ -90,6 +91,14 @@ public class Config {
                             module.setHidden(hidden.getAsBoolean());
                         }
                     }
+
+                    if (object.has("posX") && object.has("posY")) {
+                        HudElement element = Myau.hudManager == null ? null : Myau.hudManager.getElement(module.getClass());
+                        if (element != null) {
+                            element.setX(object.get("posX").getAsFloat());
+                            element.setY(object.get("posY").getAsFloat());
+                        }
+                    }
                 }
             }
             ChatUtil.sendFormatted(String.format("%sConfig has been loaded (&a&o%s&r)&r", Myau.clientName, file.getName()));
@@ -105,6 +114,10 @@ public class Config {
     }
 
     public void save() {
+        this.save(false);
+    }
+
+    public void save(boolean silent) {
         try {
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
@@ -116,6 +129,12 @@ public class Config {
                 moduleObject.addProperty("toggled", module.isEnabled());
                 moduleObject.addProperty("key", module.getKey());
                 moduleObject.addProperty("hidden", module.isHidden());
+
+                HudElement element = Myau.hudManager == null ? null : Myau.hudManager.getElement(module.getClass());
+                if (element != null) {
+                    moduleObject.addProperty("posX", element.getX());
+                    moduleObject.addProperty("posY", element.getY());
+                }
 
                 ArrayList<Property<?>> list = Myau.propertyManager.properties.get(module.getClass());
                 if (list != null) {
@@ -133,7 +152,9 @@ public class Config {
             PrintWriter printWriter = new PrintWriter(new FileWriter(file));
             printWriter.println(gson.toJson(object));
             printWriter.close();
-            ChatUtil.sendFormatted(String.format("%sConfig has been saved (&a&o%s&r)&r", Myau.clientName, file.getName()));
+            if (!silent) {
+                ChatUtil.sendFormatted(String.format("%sConfig has been saved (&a&o%s&r)&r", Myau.clientName, file.getName()));
+            }
         } catch (IOException e) {
             ((IAccessorMinecraft) mc).getLogger().error("Error saving config: " + e.getMessage());
             ChatUtil.sendFormatted(String.format("%sConfig couldn't be saved (&c&o%s&r)&r", Myau.clientName, file.getName()));

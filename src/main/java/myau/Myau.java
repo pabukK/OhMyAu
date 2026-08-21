@@ -75,6 +75,7 @@ public class Myau {
         moduleManager.modules.put(BedESP.class, new BedESP());
         moduleManager.modules.put(BedTracker.class, new BedTracker());
         moduleManager.modules.put(Blink.class, new Blink());
+        moduleManager.modules.put(BackTrack.class, new BackTrack());
         moduleManager.modules.put(Chams.class, new Chams());
         moduleManager.modules.put(ChestESP.class, new ChestESP());
         moduleManager.modules.put(ChestStealer.class, new ChestStealer());
